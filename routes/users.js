@@ -2,7 +2,8 @@ var express = require('express')
 var app = express()
 var ObjectId = require('mongodb').ObjectId
 
-// SHOW LIST OF USERS
+
+
 app.get('/', function(req, res) {	
 	// fetch and sort users collection by id in descending order
 	req.db.collection('users').find().sort({"_id": -1}).toArray(function(err, result) {
@@ -38,6 +39,7 @@ app.get('/add', function(req, res){
 	})
 })
 
+
 // ADD NEW USER POST ACTION
 app.post('/add', function(req, res){	
 		var user = {
@@ -70,6 +72,27 @@ app.post('/add', function(req, res){
 				
 			}
 		})
+})
+
+// SHOW LIST OF USERS WITH DSBDA SCORE -GT 50
+app.get('/dsbda20', function(req, res) {	
+	// fetch and sort users collection by id in descending order
+	req.db.collection('users').find({ dsbda:  {$gte: "50"}, cns: "100" }).sort({"_id": -1}).toArray(function(err, result) {
+		//if (err) return console.log(err)
+		if (err) {
+			req.flash('error', err)
+			res.render('user/list', {
+				title: 'User List', 
+				data: ''
+			})
+		} else {
+			// render to views/user/list.ejs template file
+			res.render('user/dsbda20', {
+				title: 'Students with DSBA -gt 20', 
+				data: result
+			})
+		}
+	})
 })
 
 // SHOW EDIT USER FORM
